@@ -1,30 +1,92 @@
-[
-  {
-    "id": 1,
-    "subject": "CN",
-    "title": "Computer Networks - OSI Model",
-    "pdf": "pdfs/CN.pdf",
-    "description": "Lecture notes"
-  },
-  {
-    "id": 2,
-    "subject": "DBMS",
-    "title": "DBMS - Normalization",
-    "pdf": "pdfs/DBMS.pdf",
-    "description": "Lecture notes"
-  },
-  {
-    "id": 3,
-    "subject": "DSA",
-    "title": "DSA - Sorting",
-    "pdf": "pdfs/DSA.pdf",
-    "description": "Lecture notes"
-  },
-  {
-    "id": 4,
-    "subject": "OS",
-    "title": "Operating Systems - Basics",
-    "pdf": "pdfs/OS.pdf",
-    "description": "Lecture notes"
+async function loadLectures(){
+  try {
+    const res = await fetch('lectures.json');
+    const data = await res.json();
+
+    // Group lectures by subject
+    const grouped = data.reduce((acc, item) => {
+      if (!acc[item.subject]) acc[item.subject] = [];
+      acc[item.subject].push(item);
+      return acc;
+    }, {});
+
+    const container = document.getElementById('lectures');
+    container.innerHTML = '';
+
+    // Render groups with subject headings
+    for (const subject of Object.keys(grouped).sort()) {
+      const section = document.createElement('section');
+      section.innerHTML = `<h2>${escapeHtml(subject)}</h2>`;
+      grouped[subject].forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.description || '')}</p>
+          <p><a href="${item.pdf}" target="_blank" rel="noopener">Open PDF</a></p>
+        `;
+        section.appendChild(card);
+      });
+      container.appendChild(section);
+    }
+  } catch(e){
+    console.error(e);
+    document.getElementById('lectures').textContent = 'Failed to load lectures';
   }
-]
+}
+
+function escapeHtml(s=''){ 
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+}
+
+loadLectures();
+let allLectures = [];
+
+async function loadLectures() {
+  try {
+    const res = await fetch('lectures.json');
+    allLectures = await res.json();
+    renderLectures(allLectures);
+  } catch (e) {
+    console.error(e);
+    document.getElementById('lectures').textContent = 'Failed to load lectures';
+  }
+}
+
+function renderLectures(data) {
+  const grouped = data.reduce((acc, item) => {
+    if (!acc[item.subject]) acc[item.subject] = [];
+    acc[item.subject].push(item);
+    return acc;
+  }, {});
+
+  const container = document.getElementById('lectures');
+  container.innerHTML = '';
+
+  for (const subject of Object.keys(grouped).sort()) {
+    const section = document.createElement('section');
+    section.innerHTML = `<h2>${escapeHtml(subject)}</h2>`;
+    grouped[subject].forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h3>${escapeHtml(item.title)}</h3>
+        <p>${escapeHtml(item.description || '')}</p>
+        <p><a href="${item.pdf}" target="_blank" rel="noopener">Open PDF</a></p>
+      `;
+      section.appendChild(card);
+    });
+    container.appendChild(section);
+  }
+}
+
+document.getElementById('search').addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase();
+  const filtered = allLectures.filter(item =>
+    item.title.toLowerCase().includes(query) ||
+    item.subject.toLowerCase().includes(query)
+  );
+  renderLectures(filtered);
+});
+
+loadLectures();
