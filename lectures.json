@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "subject": "CN",
+    "title": "Computer Networks - OSI Model",
+    "pdf": "pdfs/CN.pdf",
+    "description": "Lecture notes"
+  },
+  {
+    "id": 2,
+    "subject": "DBMS",
+    "title": "DBMS - Normalization",
+    "pdf": "pdfs/DBMS.pdf",
+    "description": "Lecture notes"
+  },
+  {
+    "id": 3,
+    "subject": "DSA",
+    "title": "DSA - Sorting",
+    "pdf": "pdfs/DSA.pdf",
+    "description": "Lecture notes"
+  },
+  {
+    "id": 4,
+    "subject": "OS",
+    "title": "Operating Systems - Basics",
+    "pdf": "pdfs/OS.pdf",
+    "description": "Lecture notes"
+  }
+]
